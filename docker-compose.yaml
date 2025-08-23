@@ -12,4 +12,13 @@ services:
     restart: unless-stopped
     volumes:
       - ./minio_data:/data
+    networks:
+      - root_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evolutionapi.rule=Host(`minio.capitolia.cloud`)"
+      - "traefik.http.services.evolutionapi.loadbalancer.server.port=8080"
+      - "traefik.http.routers.evolutionapi.entrypoints=websecure"
+      - "traefik.http.routers.evolutionapi.tls.certresolver=mytlschallenge"
+
     command: server /data --console-address ":9001"
