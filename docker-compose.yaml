@@ -7,9 +7,9 @@ services:
       - MINIO_ROOT_USER=capitol
       - MINIO_ROOT_PASSWORD=C4p1t0lAi2025@
     # No expongas puertos, Traefik se encarga de esto  
-    #ports:
+    ports:
     #  - "9000:9000"
-    #  - "9001:9001"
+      - "9001:9001"
     restart: always
     volumes:
       - ./minio_data:/data
