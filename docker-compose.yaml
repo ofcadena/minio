@@ -6,19 +6,24 @@ services:
     environment:
       - MINIO_ROOT_USER=capitol
       - MINIO_ROOT_PASSWORD=C4p1t0lAi2025@
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    restart: unless-stopped
+    # No expongas puertos, Traefik se encarga de esto  
+    #ports:
+    #  - "9000:9000"
+    #  - "9001:9001"
+    restart: always
     volumes:
       - ./minio_data:/data
     networks:
       - root_default
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.evolutionapi.rule=Host(`minio.capitolia.cloud`)"
-      - "traefik.http.services.evolutionapi.loadbalancer.server.port=8080"
-      - "traefik.http.routers.evolutionapi.entrypoints=websecure"
-      - "traefik.http.routers.evolutionapi.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.minio.rule=Host(`minio.capitolia.cloud`)"
+      - "traefik.http.services.minio.loadbalancer.server.port=9001"
+      - "traefik.http.routers.minio.entrypoints=websecure"
+      - "traefik.http.routers.minio.tls.certresolver=mytlschallenge"
 
     command: server /data --console-address ":9001"
+
+networks:
+  root_default:
+    external: true   # Esta red debe ya existir (la que usa tu Traefik)
