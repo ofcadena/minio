@@ -5,7 +5,7 @@ services:
     environment:
       - MINIO_ROOT_USER=capitol
       - MINIO_ROOT_PASSWORD=C4p1t0lAi2025@
-    # Quita o comenta los puertos, Traefik se encarga de exponerlos
+    # Quita la sección de ports:
     # ports:
     #   - "9000:9000"
     #   - "9001:9001"
@@ -15,20 +15,24 @@ services:
     networks:
       - root_default
     labels:
-      # Panel web (MinIO Console)
       - "traefik.enable=true"
+
+      # Panel web Minio Console (9001)
       - "traefik.http.routers.minio-console.rule=Host(`minio.capitolia.cloud`)"
       - "traefik.http.routers.minio-console.entrypoints=websecure"
       - "traefik.http.routers.minio-console.tls.certresolver=mytlschallenge"
-      - "traefik.http.services.minio-console.loadbalancer.server.port=9001"
-      # API S3 (backend)
+      - "traefik.http.routers.minio-console.service=minio-console-service"
+      - "traefik.http.services.minio-console-service.loadbalancer.server.port=9001"
+
+      # API S3 (9000)
       - "traefik.http.routers.minio-api.rule=Host(`apiminio.capitolia.cloud`)"
       - "traefik.http.routers.minio-api.entrypoints=websecure"
       - "traefik.http.routers.minio-api.tls.certresolver=mytlschallenge"
-      - "traefik.http.services.minio-api.loadbalancer.server.port=9000"
+      - "traefik.http.routers.minio-api.service=minio-api-service"
+      - "traefik.http.services.minio-api-service.loadbalancer.server.port=9000"
 
     command: server /data --console-address ":9001"
 
 networks:
   root_default:
-    external: true   # Ya debe existir la red, como mencionaste
+    external: true
